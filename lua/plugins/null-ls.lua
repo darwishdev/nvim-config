@@ -14,10 +14,10 @@ return {
         null_ls.builtins.formatting.prettier.with({
           filetypes = { "vue", "javascript",  "css", "json", "yaml", "html" },
         }),
-
+        null_ls.builtins.formatting.stylua, 
         -- Vue & JavaScript/TypeScript diagnostics
          null_ls.builtins.diagnostics.eslint_d.with({
-           filetypes = { "vue", "javascript","typescript" },
+           filetypes = {  "javascript","typescript" },
          }),
       },
       on_attach = function(client, bufnr)

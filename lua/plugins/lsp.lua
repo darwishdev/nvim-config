@@ -1,36 +1,48 @@
 -- ~/.config/nvim/lua/plugins/lsp.lualsp
-
 return {
   {
     "neovim/nvim-lspconfig",
     config = function()
       local lspconfig = require("lspconfig")
+local util = lspconfig.util
+local home = vim.fn.expand("~") 
+local function get_global_node_modules()
+  local handle = io.popen("npm root -g")
+  if handle then
+    local result = handle:read("*a")
+    handle:close()
+    return result:gsub("\n", "")
+  end
+  return home .. "/.node_modules"
+end
 
-
--- Setup Protols
-lspconfig.efm.setup({
-  filetypes = { "proto" },
-  init_options = { documentFormatting = true, documentLinting = true },
-  settings = {
-    languages = {
-      proto = {
-        {
-          lintCommand = "buf lint --error-format=json",
-          lintFormats = { "%f:%l:%c:%t:%m" },
-          formatCommand = "buf format -",
-          formatStdin = true,
+local global_node_modules = get_global_node_modules()
+local tsdk_path = global_node_modules .. "/typescript/lib"
+local vue_plugin_path = global_node_modules .. "/@vue/language-server/node_modules/@vue/typescript-plugin"
+      -- Setup Protols
+      lspconfig.efm.setup({
+        filetypes = { "proto" },
+        init_options = { documentFormatting = true, documentLinting = true },
+        settings = {
+          languages = {
+            proto = {
+              {
+                lintCommand = "buf lint --error-format=json",
+                lintFormats = { "%f:%l:%c:%t:%m" },
+                formatCommand = "buf format -",
+                formatStdin = true,
+              },
+            },
+          },
         },
-      },
-    },
-  },
-})      -- TypeScript Language Server (ts_ls)
+      })      -- TypeScript Language Server (ts_ls)
 
       -- Vue Language Server (Volar)
 
       lspconfig.volar.setup({
         init_options = {
           typescript = {
-            tsdk = "/opt/homebrew/lib/node_modules/typescript/lib",
+            tsdk = tsdk_path,
           },
         },
 
@@ -58,7 +70,7 @@ lspconfig.efm.setup({
           plugins = {
             {
               name = "@vue/typescript-plugin",
-              location = "/opt/homebrew/lib/node_modules/@vue/language-server/node_modules/@vue/typescript-plugin",
+              location = vue_plugin_path,
               languages = {  "vue"},
             },
           },
