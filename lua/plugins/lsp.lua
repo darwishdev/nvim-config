@@ -7,6 +7,32 @@ return {
 			local lspconfig = require("lspconfig")
 			local util = lspconfig.util
 			local home = vim.fn.expand("~")
+
+			-- Notify on attach/detach
+			local notify = vim.notify
+			vim.api.nvim_create_autocmd("LspAttach", {
+				callback = function(args)
+					local client = vim.lsp.get_client_by_id(args.data.client_id)
+					if client and client.name then
+						notify("LSP [" .. client.name .. "] attached to buffer " .. args.buf, vim.log.levels.INFO, {
+							title = "LSP Attached",
+							icon = "",
+						})
+					end
+				end,
+			})
+
+			vim.api.nvim_create_autocmd("LspDetach", {
+				callback = function(args)
+					local client = vim.lsp.get_client_by_id(args.data.client_id)
+					if client and client.name then
+						notify("LSP [" .. client.name .. "] detached from buffer " .. args.buf, vim.log.levels.WARN, {
+							title = "LSP Detached",
+							icon = "",
+						})
+					end
+				end,
+			})
 			local function get_global_node_modules()
 				local handle = io.popen("npm root -g")
 				if handle then
@@ -40,7 +66,31 @@ return {
 					},
 				},
 			}) -- TypeScript Language Server (ts_ls)
-
+			lspconfig.emmet_ls.setup({
+				-- if you already defined `capabilities` earlier, pass it here
+				-- capabilities = capabilities,
+				filetypes = {
+					"html",
+					"templ", -- your existing html types
+					"css",
+					"scss",
+					"sass",
+					"less",
+					"javascriptreact",
+					"typescriptreact",
+					"vue",
+					"svelte",
+					"pug",
+				},
+				root_dir = util.root_pattern(".git", "package.json"), -- sensible default
+				init_options = {
+					html = {
+						options = {
+							["bem.enabled"] = true, -- example of tweaking expansions
+						},
+					},
+				},
+			})
 			-- Vue Language Server (vue_ls)
 
 			lspconfig.vue_ls.setup({

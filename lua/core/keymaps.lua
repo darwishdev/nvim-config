@@ -4,6 +4,8 @@
 vim.keymap.set("n", "<C-s>", "<cmd>w<cr>", { desc = "Save file" })
 vim.keymap.set("i", "<C-s>", "<esc><cmd>w<cr>", { desc = "Save file" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
+vim.keymap.set("n", "<leader>td", "<cmd>DBUIToggle<CR>", { desc = "Toggle Dadbod UI" })
+vim.keymap.set("n", "<leader>td", "<cmd>DBUIToggle<CR>", { desc = "Toggle Dadbod UI" })
 --
 -- LSP keymaps
 
